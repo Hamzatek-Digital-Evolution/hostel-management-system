@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 .env
+DOCUMENTATION.md
+DOCUMENTATION_NEW.md
 
 # Editor directories and files
 .vscode/*

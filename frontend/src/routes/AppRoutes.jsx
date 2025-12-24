@@ -11,6 +11,7 @@ import AdminAllocations from '../pages/admin/AdminAllocations';
 import AdminStudents from '../pages/admin/AdminStudents';
 import AdminPayments from '../pages/admin/AdminPayments';
 import MainLayout from '../components/common/MainLayout';
+import Home from '../pages/Home';
 
 
 /* Pages (temporary placeholders) */
@@ -24,6 +25,7 @@ const AppRoutes = () => {
             {/* Public */}
             <Route path="/test" element={<h1>ROUTER WORKS</h1>} />
 
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 

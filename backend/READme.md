@@ -285,3 +285,20 @@ http://localhost:5000
 
 **Frontend Integration (React + Tailwind CSS)**
 Role-based dashboards and API consumption.
+
+## Sample user backend registeration
+
+POST http://localhost:5000/api/auth/register
+
+BODY
+{
+"email": "",
+"password": "",
+"regNumber": "",
+"firstName": "",
+"middleName": "",
+"lastName": "",
+"gender": "",
+"phoneNumber": "07",
+"school": ""
+}

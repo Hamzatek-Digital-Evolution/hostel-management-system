@@ -14,7 +14,12 @@ const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 
 /* Global Middleware */
-app.use(cors());
+// Restrict CORS in production to the configured frontend URL
+const corsOptions = {};
+if (process.env.FRONTEND_URL) {
+  corsOptions.origin = process.env.FRONTEND_URL;
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

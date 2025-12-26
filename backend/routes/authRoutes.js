@@ -61,5 +61,7 @@ router.post("/register", authController.registerStudent);
 
 /* Login (Admin & Student) */
 router.post("/login", authController.login);
+// ADMIN REGISTRATION ROUTE
+router.post("/register-admin", authController.registerAdmin);
 
 module.exports = router;

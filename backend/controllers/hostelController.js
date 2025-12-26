@@ -31,10 +31,40 @@ exports.getHostels = async (req, res) => {
     const where = {};
     if (gender) where.gender = gender;
 
-    const hostels = await Hostel.findAll({ where });
-    return res.status(200).json(hostels);
+    const hostels = await Hostel.findAll({
+      where,
+      include: [
+        {
+          model: Room,
+          attributes: ["capacity", "occupied"],
+        },
+      ],
+    });
+
+    const data = hostels.map((h) => {
+      const totalCapacity = h.Rooms.reduce(
+        (sum, r) => sum + (r.capacity || 0),
+        0
+      );
+      const occupiedBeds = h.Rooms.reduce(
+        (sum, r) => sum + (r.occupied || 0),
+        0
+      );
+
+      return {
+        id: h.id,
+        name: h.name,
+        gender: h.gender,
+        totalBeds: totalCapacity,
+        occupiedBeds,
+        availableBeds: totalCapacity - occupiedBeds,
+        totalRooms: h.Rooms.length,
+      };
+    });
+
+    res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Failed to fetch hostels",
       error: error.message,
     });
@@ -51,9 +81,8 @@ exports.getHostelRooms = async (req, res) => {
     if (!hostel) return res.status(404).json({ message: "Hostel not found" });
 
     const where = { hostelId };
-    if (available && available.toString() === "true") {
-      // DB-level availability: occupied < capacity
-      where[Op.and] = literal("occupied < capacity");
+    if (available === "true") {
+      where.occupied = { [Op.lt]: sequelize.col("capacity") };
     }
 
     const rooms = await Room.findAll({ where, include: [{ model: Hostel }] });

@@ -9,21 +9,35 @@ const { sequelize } = require("../config/database");
 exports.getAdminDashboard = async (req, res) => {
   try {
     const totalHostels = await Hostel.count();
-    const totalRooms = await Room.count();
-    // Allocation model uses status values: 'ACTIVE' | 'VACATED'
+
+    const rooms = await Room.findAll({
+      attributes: ["capacity", "occupied"],
+    });
+
+    const totalRooms = rooms.length;
+
+    const totalCapacity = rooms.reduce((sum, r) => sum + (r.capacity || 0), 0);
+
+    const occupiedBeds = rooms.reduce((sum, r) => sum + (r.occupied || 0), 0);
+
+    const availableBeds = totalCapacity - occupiedBeds;
+
+    const availableRooms = rooms.filter(
+      (r) => (r.occupied || 0) < (r.capacity || 0)
+    ).length;
+
     const totalAllocations = await Allocation.count({
       where: { status: "ACTIVE" },
     });
 
-    // Room model uses status enum 'AVAILABLE' | 'FULL' and an 'occupied' count.
-    // Count rooms marked AVAILABLE to represent available rooms.
-    const availableRooms = await Room.count({ where: { status: "AVAILABLE" } });
-
     res.status(200).json({
       totalHostels,
       totalRooms,
-      totalAllocations,
+      totalCapacity,
+      occupiedBeds,
+      availableBeds,
       availableRooms,
+      totalAllocations,
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to load admin dashboard" });

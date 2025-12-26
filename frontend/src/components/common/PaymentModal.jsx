@@ -65,7 +65,8 @@ const PaymentModal = ({ isOpen, onCancel, onSubmit, defaultAmount, hostels = [] 
                         className="w-full border p-2 rounded"
                         value={reference}
                         onChange={(e) => setReference(e.target.value)}
-                        placeholder="Payment reference or transaction id"
+                        placeholder="M-Pesa Payment reference or transaction id"
+                        required
                     />
                 </div>
 

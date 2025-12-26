@@ -32,7 +32,7 @@ const Sidebar = () => {
                 )}
 
                 <div className="mt-4">
-                    <button onClick={logout} className="text-sm text-red-600">Logout</button>
+                    <button onClick={logout} className="text-sm text-red-600 cursor-pointer">Logout</button>
                 </div>
             </nav>
         </aside>

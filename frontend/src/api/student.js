@@ -11,5 +11,5 @@ export const getAllocationStatusByPayment = (studentId) =>
 
 export const getAllAllocationStatuses = () =>
   api.get("/allocations/status/all");
-
+export const fetchEligibleHostels = () => api.get("/student/eligible-hostels");
 export const initiatePayment = (data) => api.post("/payments", data);

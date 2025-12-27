@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PaymentModal from '../../components/common/PaymentModal';
-import { initiatePayment } from '../../api/student';
-import { fetchHostels } from '../../api/booking';
+import { fetchEligibleHostels, initiatePayment } from '../../api/student';
+import api from '../../api/axios';
+//import { fetchHostels } from '../../api/booking';
 import { toast } from 'react-toastify';
 
 const ActionButton = ({ label, disabled, color, onClick }) => (
@@ -38,10 +39,31 @@ const StudentActions = ({ data }) => {
         }
     };
 
+    const downloadReceipt = async () => {
+        const paymentId = data?.payment?.id;
+        if (!paymentId) return toast.error('No payment found');
+        try {
+            const res = await api.get(`/payments/${paymentId}/receipt`, { responseType: 'blob' });
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${paymentId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            toast.success('Receipt downloaded');
+        } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || 'Failed to download receipt');
+        }
+    };
+
     const loadHostels = async () => {
         try {
             // fetch hostels for student's gender if available
-            const res = await fetchHostels();
+            const res = await fetchEligibleHostels();
             setHostels(res.data || []);
         } catch (err) {
             console.error('Failed to load hostels for payment', err);
@@ -73,6 +95,14 @@ const StudentActions = ({ data }) => {
                     color="bg-indigo-600 hover:bg-indigo-700"
                     onClick={() => { setPayOpen(true); loadHostels(); }}
                 />
+                {data.payment?.status === 'PAID' && (
+                    <ActionButton
+                        label="Download Receipt"
+                        disabled={false}
+                        color="bg-yellow-600 hover:bg-yellow-700"
+                        onClick={downloadReceipt}
+                    />
+                )}
                 <ActionButton
                     label="Vacate Room"
                     disabled={data.allocationStatus !== "ALLOCATED"}

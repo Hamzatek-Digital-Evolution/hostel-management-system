@@ -74,7 +74,7 @@ const AdminStudents = () => {
         <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
             <h2 className="font-semibold mb-4 text-lg">Students</h2>
 
-            <div className="max-h-72 overflow-y-auto rounded-md">
+            <div className="max-h-72 overflow-y-auto rounded-md overflow-x-auto">
                 <table className="w-full text-sm divide-y divide-gray-100">
                     <thead className="bg-gray-50">
                         <tr className="text-left text-xs text-gray-500 uppercase tracking-wider">

@@ -6,6 +6,6 @@ export const fetchHostels = (gender) => {
 };
 
 export const fetchAvailableRooms = (hostelId) =>
-  api.get(`/hostels/${hostelId}/rooms?available=true`);
+  api.get(`/hostels/${hostelId}/rooms`);
 
 export const bookRoom = (roomId) => api.post("/allocations/book", { roomId });

@@ -36,4 +36,16 @@ router.get(
   paymentController.getAllAllPayments
 );
 
+router.get(
+  "/:paymentId/receipt",
+  authMiddleware,
+  paymentController.downloadReceipt
+);
+router.get(
+  "/student/history",
+  authMiddleware,
+  roleMiddleware("STUDENT"),
+  paymentController.getStudentPaymentHistory
+);
+
 module.exports = router;

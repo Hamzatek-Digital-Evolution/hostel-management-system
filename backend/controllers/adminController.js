@@ -2,6 +2,10 @@ const { Hostel, Room, Allocation, Student } = require("../models");
 const { Payment } = require("../models");
 const logAction = require("../utils/auditLogger");
 const { sequelize } = require("../config/database");
+const {
+  getCurrentSemester,
+  getLastSemester,
+} = require("../utils/semesterUtils");
 
 /**
  * Admin dashboard summary
@@ -30,6 +34,19 @@ exports.getAdminDashboard = async (req, res) => {
       where: { status: "ACTIVE" },
     });
 
+    const currentSemester = getCurrentSemester();
+    const lastSemester = getLastSemester(currentSemester);
+
+    const thisSemTotal =
+      (await Payment.sum("amount", {
+        where: { semester: currentSemester, status: "PAID" },
+      })) || 0;
+
+    const lastSemTotal =
+      (await Payment.sum("amount", {
+        where: { semester: lastSemester, status: "PAID" },
+      })) || 0;
+
     res.status(200).json({
       totalHostels,
       totalRooms,
@@ -38,6 +55,8 @@ exports.getAdminDashboard = async (req, res) => {
       availableBeds,
       availableRooms,
       totalAllocations,
+      thisSemesterTotal: thisSemTotal,
+      lastSemesterTotal: lastSemTotal,
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to load admin dashboard" });

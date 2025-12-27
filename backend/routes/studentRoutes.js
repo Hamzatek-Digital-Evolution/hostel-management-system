@@ -7,6 +7,7 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 const {
   getStudentDashboard,
   getStudentBookings,
+  getEligibleHostelsForPayment,
 } = require("../controllers/studentController");
 
 /**
@@ -27,6 +28,14 @@ router.get(
   authMiddleware,
   roleMiddleware("STUDENT"),
   getStudentBookings
+);
+
+//get eligible hostels
+router.get(
+  "/eligible-hostels",
+  authMiddleware,
+  roleMiddleware("STUDENT"),
+  getEligibleHostelsForPayment
 );
 
 module.exports = router;

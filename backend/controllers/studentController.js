@@ -99,3 +99,31 @@ exports.getStudentBookings = async (req, res) => {
     return res.status(500).json({ message: "Failed to load bookings" });
   }
 };
+
+/**
+ * STUDENT: Get hostels eligible for payment (gender-matched)
+ */
+exports.getEligibleHostelsForPayment = async (req, res) => {
+  try {
+    const student = await Student.findOne({
+      where: { userId: req.user.id },
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const hostels = await Hostel.findAll({
+      where: { gender: student.gender },
+      attributes: ["id", "name", "gender", "feeAmount"],
+      order: [["name", "ASC"]],
+    });
+
+    return res.status(200).json(hostels);
+  } catch (error) {
+    console.error("Eligible hostels error:", error);
+    return res.status(500).json({
+      message: "Failed to fetch eligible hostels",
+    });
+  }
+};

@@ -4,12 +4,16 @@ const { Op, literal } = require("sequelize");
 /* CREATE HOSTEL */
 exports.createHostel = async (req, res) => {
   try {
-    const { name, gender, totalRooms } = req.body;
+    const { name, gender, totalRooms, feeAmount } = req.body;
 
     const hostel = await Hostel.create({
       name,
       gender,
-      totalRooms,
+      totalRooms: totalRooms || 0,
+      feeAmount:
+        feeAmount !== undefined && feeAmount !== null && feeAmount !== ""
+          ? Number(feeAmount)
+          : 0.0,
     });
 
     return res.status(201).json({
